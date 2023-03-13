@@ -3,8 +3,8 @@
  <br />
  <div align="center">
  <h1 align="center">HR Hub</h1>
-    <a href="https://github.com/cleclair71/CrewCard">
-     <img src="/assets/crewcardstacked1.jpg" alt="Logo" width="200" height="200">
+    <a href="https://github.com/cleclair71/hr-hub">
+     <img src="/assets/img/hrhub.jpg" alt="Logo" height="200">
    </a>
     <p align="center">
       Teamwork made easy with our input generated CLI crew cards!
