@@ -19,7 +19,6 @@ const promptUser = () => {
             choices: [
                 'View all employees',
                 'View all employees by department',
-                'View all employees by department',
                 'View all roles',
                 'View all departments',
                 'View Department Budget',
@@ -104,7 +103,7 @@ const viewAllEmployees = () => {
     AND role.id = employee.role_id
     ORDER BY employee.id ASC;`;
 
-    server.query(query, (err, res) => {
+    server.promise().query(query, (err, res) => {
         if (err) throw err;
         console.table(res); // add styling
         promptUser();
@@ -113,13 +112,66 @@ const viewAllEmployees = () => {
 
 // view all employees by department
 
-// view all employees by manager
+const viewAllEmployeesByDepartment = () => {
+    const query =
+    `SELECT employee.firt_name,
+    employee.last_name,
+    department.name AS department
+    FROM employee
+    LEFT JOIN role ON employee.role_id = role.id
+    LEFT JOIN department ON role.department_id = department.id`;
+
+    server.promise().query(query, (err, res) => {
+        if (err) throw err;
+        console.table(res); // add styling
+        promptUser();
+    });
+};
 
 // view all roles
 
+const viewAllRoles = () => {
+    const query =
+    `SELECT role.id, role.title, department.name AS department, role.salary
+    FROM role
+    LEFT JOIN department ON role.department_id = department.id`;
+
+    server.promise().query(query, (err, res) => {
+        if (err) throw err;
+        console.table(res); // add styling
+        promptUser();
+    });
+};
+
 // view all departments
 
+const viewAllDepartments = () => {
+    const query =
+    `SELECT department.id AS id, 
+    department.name AS department FROM department`;
+
+    server.promise().query(query, (err, res) => {
+        if (err) throw err;
+        console.table(res); // add styling
+        promptUser();
+    });
+};
 // view department budget
+
+const viewDepartmentBudget = () => {
+    const query =
+    `SELECT department_id AS id, 
+    department.name AS department,
+    SUM(salary) AS budget
+    FROM role
+    LEFT JOIN department ON role.department_id = department.id GROUP BY department_id`;
+
+server.query(query, (err, res) => {
+    if (err) throw err;
+    console.table(res); // add styling
+    promptUser();
+});
+};
 
 // add employee
 
