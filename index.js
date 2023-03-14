@@ -1,6 +1,10 @@
 const server = require('../db/server');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
+const { addEmployee, addRole, addDepartment } = require('./addFunctions');
+const {updateEmployeeRole, updateEmployeeManager} = require('./updateFunctions');
+const {deleteEmployee, deleteRole, deleteDepartment} = require('./deleteFunctions');
+const {viewAllEmployees, viewAllEmployeesByDepartment, viewAllEmployeesByManager, viewAllRoles, viewAllDepartments, viewDepartmentBudget} = require('./displayFunctions');
 
 // connect to server
 server.connect((err) => {
@@ -18,7 +22,6 @@ const promptUser = () => {
             message: 'What would you like to do?',
             choices: [
                 'View all employees',
-                'View all employees by department',
                 'View all employees by department',
                 'View all roles',
                 'View all departments',
@@ -87,54 +90,5 @@ const promptUser = () => {
     });
 };
 
-// view all employees
 
-const viewAllEmployees = () => {
-    
-    const query = 
-    `SELECT employee.id, 
-    employee.first_name, 
-    employee.last_name, 
-    role.title, 
-    department.name AS department, 
-    role.salary, 
-    CONCAT(manager.first_name, ' ', manager.last_name) AS manager
-    FROM employee, role, department
-    WHERE department.id = role.department_id
-    AND role.id = employee.role_id
-    ORDER BY employee.id ASC;`;
 
-    server.query(query, (err, res) => {
-        if (err) throw err;
-        console.table(res); // add styling
-        promptUser();
-    });
-};
-
-// view all employees by department
-
-// view all employees by manager
-
-// view all roles
-
-// view all departments
-
-// view department budget
-
-// add employee
-
-// add role
-
-// add department
-
-// update employee role
-
-// update employee manager
-
-// delete employee
-
-// delete role
-
-// delete department
-
-// exit
