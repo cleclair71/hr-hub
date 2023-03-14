@@ -2,7 +2,7 @@ const mysql = require('mysql');
 
 require ('dotenv').config();
 
-const connection = mysql.createConnection({
+const server = mysql.createConnection({
     host: 'localhost',
     port: 3306,
     user: 'root',
@@ -10,4 +10,4 @@ const connection = mysql.createConnection({
     database: 'employees'
 });
 
-module.exports = connection;
+module.exports = server;
