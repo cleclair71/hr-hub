@@ -1,16 +1,17 @@
-const server = require('../db/server');
+const server = require('./db/server.js');
+const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
-const { addEmployee, addRole, addDepartment } = require('./addFunctions');
-const {updateEmployeeRole, updateEmployeeManager} = require('./updateFunctions');
-const {deleteEmployee, deleteRole, deleteDepartment} = require('./deleteFunctions');
-const {viewAllEmployees, viewAllEmployeesByDepartment, viewAllEmployeesByManager, viewAllRoles, viewAllDepartments, viewDepartmentBudget} = require('./displayFunctions');
+const { addEmployee, addRole, addDepartment } = require('./lib/addFunctions');
+const {updateEmployeeRole, updateEmployeeManager} = require('./lib/updateFunctions');
+const {deleteEmployee, deleteRole, deleteDepartment} = require('./lib/deleteFunctions');
+const {viewAllEmployees, viewAllEmployeesByDepartment, viewAllEmployeesByManager, viewAllRoles, viewAllDepartments, viewDepartmentBudget} = require('./lib/displayFunctions');
 
 // connect to server
 server.connect((err) => {
     if (err) throw err;
     console.log('Connected to the employee database.'); // add title banner
-    init();
+    promptUser();
 });
 
 // prompt user choices
