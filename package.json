@@ -1,0 +1,23 @@
+{
+  "name": "hr-hub",
+  "version": "1.0.0",
+  "description": "Command line application to help you organize and plan your business",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "hr-hub"
+  },
+  "author": "Cassie LeClair",
+  "license": "ISC",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^8.2.4",
+    "mysql2": "^3.2.0"
+  }
+}
