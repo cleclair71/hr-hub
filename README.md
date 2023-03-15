@@ -2,7 +2,10 @@
   ![repo size](https://img.shields.io/github/repo-size/cleclair71/hr-hub?color=yellow)
   ![commits](https://img.shields.io/github/commit-activity/m/cleclair71/hr-hub/main)
   ![language](https://img.shields.io/github/languages/top/cleclair71/hr-hub)
-  
+  ![console.table](https://img.shields.io/github/package-json/dependency-version/cleclair71/hr-hub/console.table)
+  ![inquirer](https://img.shields.io/github/package-json/dependency-version/cleclair71/hr-hub/inquirer?color=lime)
+  ![mysql2](https://img.shields.io/github/package-json/dependency-version/cleclair71/hr-hub/mysql2?color=orange)
+
   <a name="readme-top"></a>
  <br />
  <div align="center">
