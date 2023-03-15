@@ -1,10 +1,10 @@
-const server = require('../db/server');
+const server = require('./db/server.js');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
-const { addEmployee, addRole, addDepartment } = require('./addFunctions');
-const {updateEmployeeRole, updateEmployeeManager} = require('./updateFunctions');
-const {deleteEmployee, deleteRole, deleteDepartment} = require('./deleteFunctions');
-const {viewAllEmployees, viewAllEmployeesByDepartment, viewAllEmployeesByManager, viewAllRoles, viewAllDepartments, viewDepartmentBudget} = require('./displayFunctions');
+const { addEmployee, addRole, addDepartment } = require('./lib/addFunctions');
+const {updateEmployeeRole, updateEmployeeManager} = require('./lib/updateFunctions');
+const {deleteEmployee, deleteRole, deleteDepartment} = require('./lib/deleteFunctions');
+const {viewAllEmployees, viewAllEmployeesByDepartment, viewAllEmployeesByManager, viewAllRoles, viewAllDepartments, viewDepartmentBudget} = require('./lib/viewFunctions');
 
 // connect to server
 server.connect((err) => {
