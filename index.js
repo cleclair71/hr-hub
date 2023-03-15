@@ -2,6 +2,9 @@ const server = require('./db/server.js');
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
+const chalk = require('chalk');
+const figlet = require('figlet');
+
 const { addEmployee, addRole, addDepartment } = require('./lib/addFunctions');
 const {updateEmployeeRole, updateEmployeeManager} = require('./lib/updateFunctions');
 const {deleteEmployee, deleteRole, deleteDepartment} = require('./lib/deleteFunctions');
@@ -10,9 +13,17 @@ const {viewAllEmployees, viewAllEmployeesByDepartment, viewAllEmployeesByManager
 // connect to server
 server.connect((err) => {
     if (err) throw err;
-    console.log('Connected to the employee database.'); // add title banner
-    promptUser();
-});
+    figlet('HR HUB', { font: 'doh' }, function(err, data) {
+      if (err) {
+        console.log('Error occurred while creating the figlet banner');
+        console.dir(err);
+        return;
+      }
+      console.log(chalk.magenta(data));
+      console.log('Connected to the employee database.');
+      promptUser();
+    });
+  });
 
 // prompt user choices
 const promptUser = () => {
