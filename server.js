@@ -349,72 +349,59 @@ const viewAllDepartments = () => {
 };
 
 // view department budget
-const viewDepartmentBudget = () => {
+const viewDepartmentBudget = async () => {
     const query =
         `SELECT department.id AS id, 
-        department.name AS department,
+        department_name AS department,
         SUM(role.salary) AS budget
         FROM role
         LEFT JOIN department ON role.department_id = department.id
         GROUP BY department.id`;
 
-    connection.promise().query(query, (err, res) => {
-        if (err) throw err;
-        console.table(res);
+    try {
+        const [res] = await connection.promise().query(query);
+        console.table(res); // add styling
         promptUser();
-    });
+    } catch (err) {
+        throw err;
+    }
 };
 
-// update employee role
-const updateEmployeeRole = () => {
-    const query = 'SELECT employee.id, employee.first_name, employee.last_name, role.id AS "role_id" FROM employee, role, department WHERE department.id = role.department_id AND role.id = employee.role_id';
-    connection.promise().query(query, (err, employees) => {
-        if (err) throw err;
-        const employeeNameArray = [];
-        employees.forEach((employee) => {employeeNameArray.push(`${employee.first_name} ${employee.last_name}`)});
+const updateEmployeeRole = async () => {
+    try {
+        const employeeQuery = 'SELECT employee.id, employee.first_name, employee.last_name, role.id AS "role_id" FROM employee LEFT JOIN role ON employee.role_id = role.id';
+        const [employees] = await connection.promise().query(employeeQuery);
+        const employeeNameArray = employees.map(employee => `${employee.first_name} ${employee.last_name}`);
 
-        const query = 'SELECT role.id, role.title FROM role';
-        connection.promise().query(query, (err, roles) => {
-            if (err) throw err;
-            const rolesArray = [];
-            roles.forEach((role) => {rolesArray.push(role.title)});
-            inquirer.prompt([
-                {
-                    name: 'selectedEmployee',
-                    type: 'list',
-                    message: 'Which employee would you like to update?',
-                    choices: employeeNameArray
-                },
-                {
-                    name: 'selectedRole',
-                    type: 'list',
-                    message: 'What is the employees new role?',
-                    choices: rolesArray
-                }
-            ])
+        const roleQuery = 'SELECT role.id, role.title FROM role';
+        const [roles] = await connection.promise().query(roleQuery);
+        const rolesArray = roles.map(role => role.title);
 
-            .then((answer) => {
-                let newTitleId, employeeId;
-                roles.forEach((role) => {
-                    if (answer.selectedRole === role.title) {
-                        newTitleId = role.id;
-                    }
-                });
-                employees.forEach((employee) => {
-                    if (answer.selectedEmployee === `${employee.first_name} ${employee.last_name}`) {
-                        employeeId = employee.id;
-                    }
-                });
-                const query = 'UPDATE employee SET employee.role_id = ? WHERE employee.id = ?';
-                connection.promise().query(query, [newTitleId, employeeId], (err, res) => {
-                    if (err) throw err;
-                    console.log('Employee role updated.');
-                    promptUser();
-                });
+        const answer = await inquirer.prompt([
+            {
+                name: 'selectedEmployee',
+                type: 'list',
+                message: 'Which employee would you like to update?',
+                choices: employeeNameArray
+            },
+            {
+                name: 'selectedRole',
+                type: 'list',
+                message: 'What is the employees new role?',
+                choices: rolesArray
+            }
+        ]);
 
-            });
-        });
-    });
+        const newTitleId = roles.find(role => answer.selectedRole === role.title).id;
+        const employeeId = employees.find(employee => answer.selectedEmployee === `${employee.first_name} ${employee.last_name}`).id;
+
+        const updateQuery = 'UPDATE employee SET employee.role_id = ? WHERE employee.id = ?';
+        await connection.promise().query(updateQuery, [newTitleId, employeeId]);
+        console.log('Employee role updated.');
+        promptUser();
+    } catch (err) {
+        throw err;
+    }
 };
 // update employee manager
 const updateEmployeeManager = () => {
