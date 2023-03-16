@@ -442,102 +442,84 @@ const updateEmployeeManager = async () => {
         throw err;
     }
 };
-// delete employee
-const deleteEmployee = () => {
-    const query = 'SELECT employee.id, employee.first_name, employee.last_name FROM employee';
+const deleteEmployee = async () => {
+    try {
+        const query = 'SELECT employee.id, employee.first_name, employee.last_name FROM employee';
+        const [res] = await connection.promise().query(query);
 
-    connection.promise().query(query, (err, res) => {
-        if (err) throw err;
-        const employeeNameArray = [];
-        res.forEach((employee) => {employeeNameArray.push(`${employee.first_name} ${employee.last_name}`)});
-        inquirer.prompt([
+        const employeeNameArray = res.map(employee => `${employee.first_name} ${employee.last_name}`);
+
+        const answer = await inquirer.prompt([
             {
                 name: 'selectedEmployee',
                 type: 'list',
                 message: 'Which employee would you like to delete?',
                 choices: employeeNameArray
             }
-        ])
-        .then((answer) => {
-            let employeeId;
-            res.forEach((employee) => {
-                if (answer.selectedEmployee === `${employee.first_name} ${employee.last_name}`) {
-                    employeeId = employee.id;
-                }
-            });
-            const query = 'DELETE FROM employee WHERE employee.id = ?';
-            connection.promise().query(query, [employeeId], (err, res) => {
-                if (err) throw err;
-                console.log('Employee deleted.');
-                promptUser();
-            });
-        });
-    });
+        ]);
+
+        const employeeId = res.find(employee => answer.selectedEmployee === `${employee.first_name} ${employee.last_name}`).id;
+
+        const deleteQuery = 'DELETE FROM employee WHERE employee.id = ?';
+        await connection.promise().query(deleteQuery, [employeeId]);
+        console.log('Employee deleted.');
+        promptUser();
+    } catch (err) {
+        throw err;
+    }
 };
-// delete role
-const deleteRole = () => {
-    const query = 'SELECT role.id, role.title FROM role';
+const deleteRole = async () => {
+    try {
+        const query = 'SELECT role.id, role.title FROM role';
+        const [res] = await connection.promise().query(query);
 
-    connection.promise().query(query, (err, res) => {
-        if (err) throw err;
-        const rolesArray = [];
-        res.forEach((role) => {rolesArray.push(role.title)});
+        const rolesArray = res.map(role => role.title);
 
-        inquirer.prompt([
+        const answer = await inquirer.prompt([
             {
                 name: 'selectedRole',
                 type: 'list',
                 message: 'Which role would you like to delete?',
                 choices: rolesArray
             }
-        ])
-        .then((answer) => {
-            let roleId;
-            res.forEach((role) => {
-                if (answer.selectedRole === role.title) {
-                    roleId = role.id;
-                }
-            });
-            const query = 'DELETE FROM role WHERE role.id = ?';
-            connection.promise().query(query, [roleId], (err, res) => {
-                if (err) throw err;
-                console.log('Role deleted.');
-                viewAllRoles();
-            });
-        });
-    });
+        ]);
+
+        const roleId = res.find(role => answer.selectedRole === role.title).id;
+
+        const deleteQuery = 'DELETE FROM role WHERE role.id = ?';
+        await connection.promise().query(deleteQuery, [roleId]);
+        console.log('Role deleted.');
+        viewAllRoles();
+    } catch (err) {
+        throw err;
+    }
 };
 
-// delete department
-const deleteDepartment = () => {
-    const query = 'SELECT department.id, department.name FROM department';
-    connection.promise().query(query, (err, res) => {
-        if (err) throw err;
-        const departmentNameArray = [];
-        res.forEach((department) => {departmentNameArray.push(department.name)});
-        inquirer.prompt([
+const deleteDepartment = async () => {
+    try {
+        const query = 'SELECT department.id, department.name FROM department';
+        const [res] = await connection.promise().query(query);
+
+        const departmentNameArray = res.map(department => department.name);
+
+        const answer = await inquirer.prompt([
             {
                 name: 'selectedDepartment',
                 type: 'list',
                 message: 'Which department would you like to delete?',
                 choices: departmentNameArray
             }
-        ])
-        .then((answer) => {
-            let departmentId;
-            res.forEach((department) => {
-                if (answer.selectedDepartment === department.name) {
-                    departmentId = department.id;
-                }
-            });
-            const query = 'DELETE FROM department WHERE department.id = ?';
-            connection.promise().query(query, [departmentId], (err, res) => {
-                if (err) throw err;
-                console.log('Department deleted.');
-                promptUser();
-            });
-        });
-    });
+        ]);
+
+        const departmentId = res.find(department => answer.selectedDepartment === department.name).id;
+
+        const deleteQuery = 'DELETE FROM department WHERE department.id = ?';
+        await connection.promise().query(deleteQuery, [departmentId]);
+        console.log('Department deleted.');
+        promptUser();
+    } catch (err) {
+        throw err;
+    }
 };
 
 module.exports = connection;
