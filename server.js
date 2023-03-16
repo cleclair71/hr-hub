@@ -403,17 +403,15 @@ const updateEmployeeRole = async () => {
         throw err;
     }
 };
-// update employee manager
-const updateEmployeeManager = () => {
-    const query = 'SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id FROM employee';
+const updateEmployeeManager = async () => {
+    try {
+        const query = 'SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id FROM employee';
+        const [employees] = await connection.promise().query(query);
 
-    connection.promise().query(query, (err, employees) => {
-        if (err) throw err;
-        let employeeNameArray = [];
-        employees.forEach((employee) => {employeeNameArray.push(`${employee.first_name} ${employee.last_name}`)});
+        let employeeNameArray = employees.map(employee => `${employee.first_name} ${employee.last_name}`);
         employeeNameArray.push('None');
 
-        inquirer.prompt([
+        const answer = await inquirer.prompt([
             {
                 name: 'selectedEmployee',
                 type: 'list',
@@ -426,36 +424,23 @@ const updateEmployeeManager = () => {
                 message: 'Who is the employee\'s new manager?',
                 choices: employeeNameArray
             }
-        ])
+        ]);
 
-        .then((answer) => {
-            let employeeId, managerId;
-            employees.forEach((employee) => {
-                if (answer.selectedEmployee === `${employee.first_name} ${employee.last_name}`) {
-                    employeeId = employee.id;
-                }
-                if (answer.newManager === `${employee.first_name} ${employee.last_name}`) {
-                    managerId = employee.id;
-                }
-            });
+        const employeeId = employees.find(employee => answer.selectedEmployee === `${employee.first_name} ${employee.last_name}`).id;
+        const managerId = answer.newManager === 'None' ? null : employees.find(employee => answer.newManager === `${employee.first_name} ${employee.last_name}`).id;
 
-            if (answer.newManager === 'None') {
-                managerId = null;
-            }
-
-            if (employeeId === managerId) {
-                console.log('Employee cannot be their own manager.');
-                promptUser();
-            } else {
-                let query = 'UPDATE employee SET employee.manager_id = ? WHERE employee.id = ?';
-                connection.promise().query(query, [managerId, employeeId], (err, res) => {
-                    if (err) throw err;
-                    console.log('Employee manager updated.');
-                    promptUser();
-                });
-            }
-        });
-    });
+        if (employeeId === managerId) {
+            console.log('Employee cannot be their own manager.');
+            promptUser();
+        } else {
+            const updateQuery = 'UPDATE employee SET employee.manager_id = ? WHERE employee.id = ?';
+            await connection.promise().query(updateQuery, [managerId, employeeId]);
+            console.log('Employee manager updated.');
+            promptUser();
+        }
+    } catch (err) {
+        throw err;
+    }
 };
 // delete employee
 const deleteEmployee = () => {
