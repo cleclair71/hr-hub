@@ -2,7 +2,7 @@
   "name": "hr-hub",
   "version": "1.0.0",
   "description": "Command line application to help you organize and plan your business",
-  "main": "index.js",
+  "main": "server.js",
   "directories": {
     "lib": "lib"
   },

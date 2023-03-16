@@ -3,22 +3,16 @@ const inquirer = require('inquirer');
 const cTable = require('console.table');
 const chalk = require('chalk');
 const figlet = require('figlet');
+const connection = require('./config/connection');
 
 const { addEmployee, addRole, addDepartment } = require('./lib/addFunctions');
 const {updateEmployeeRole, updateEmployeeManager} = require('./lib/updateFunctions');
 const {deleteEmployee, deleteRole, deleteDepartment} = require('./lib/deleteFunctions');
 const {viewAllEmployees, viewAllEmployeesByDepartment, viewAllEmployeesByManager, viewAllRoles, viewAllDepartments, viewDepartmentBudget} = require('./lib/displayFunctions');
 
-const server = mysql.createConnection({
-    host: "localhost",
-    port: 3306,
-    user: "root",
-    password: "10Fingers!!!",
-    database: "employees",
-});
 
-// connect to server
-server.connect((err) => {
+// connect to connection
+connection.connect(function (err) {
     if (err) throw err;
     figlet('HR HUB', function(err, data) {
       if (err) {
@@ -103,10 +97,10 @@ const promptUser = () => {
                 deleteDepartment();
                 break;
             case 'Exit':
-                server.end();
+                connection.end();
                 break;
         }
     });
 };
 
-module.exports = server;
+module.exports = connection;
