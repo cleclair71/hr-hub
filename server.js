@@ -137,8 +137,19 @@ const addEmployee = async () => {
                         return 'Please enter a last name.';
                     }
                 }
+            },
+            {
+                name: 'cancel',
+                type: 'confirm',
+                message: 'Do you want to cancel and go back to the main menu?',
+                default: false,
             }
         ]);
+
+        if (answer.cancel) {
+            promptUser();
+            return;
+        }
 
         const employeeCriteria = [answer.firstName, answer.lastName];
         // get a list of all roles from the database
@@ -158,8 +169,19 @@ const addEmployee = async () => {
                 type: 'list',
                 message: 'What is the employees role?',
                 choices: roleChoices
+            },
+            {
+                name: 'cancel',
+                type: 'confirm',
+                message: 'Do you want to cancel and go back to the main menu?',
+                default: false,
             }
         ]);
+
+        if (roleAnswer.cancel) {
+            promptUser();
+            return;
+        }
 
         const roleCriteria = roleAnswer.role;
 
@@ -180,8 +202,19 @@ const addEmployee = async () => {
                 type: 'list',
                 message: 'Who is the employees manager?',
                 choices: managerChoices
+            },
+            {
+                name: 'cancel',
+                type: 'confirm',
+                message: 'Do you want to cancel and go back to the main menu?',
+                default: false,
             }
         ]);
+
+        if (managerAnswer.cancel) {
+            promptUser();
+            return;
+        }
 
         const managerCriteria = managerAnswer.manager;
 
@@ -190,13 +223,12 @@ const addEmployee = async () => {
         await connection.promise().query(query, [employeeCriteria[0], employeeCriteria[1], roleCriteria, managerCriteria]);
 
         // display success message and view all employees
-        console.log('Employee added.');
+        console.log(chalk.bold.yellow('EMPLOYEE ADDED'));
         viewAllEmployees();
     } catch (err) {
         throw err;
     }
 };
-
 
 // function to add a role to the database
 const addRole = async () => {
@@ -208,7 +240,7 @@ const addRole = async () => {
 
         // format the list of departments for display in the prompt
         const depNameArray = departments.map((department) => department.department_name);
-        depNameArray.push('Create New Department');
+        depNameArray.push('Create New Department', 'Cancel');
 
         // prompt the user to select a department or create a new one
         const departmentAnswer = await inquirer.prompt([
@@ -223,6 +255,8 @@ const addRole = async () => {
         // if the user wants to create a new department, call the addDepartment function
         if (departmentAnswer.departmentName === 'Create New Department') {
             await addDepartment();
+        } else if (departmentAnswer.departmentName === 'Cancel') {
+            promptUser();
         } else {
 
             // get the id of the selected department
@@ -263,7 +297,7 @@ const addRole = async () => {
 
             // display success message and view all roles
             await connection.promise().query(query, criteria);
-            console.log('Role added.');
+            console.log(chalk.bold.yellow('ROLE ADDED'));
             viewAllRoles();
         }
     } catch (err) {
@@ -280,7 +314,7 @@ const addDepartment = async () => {
             {
                 name: 'departmentName',
                 type: 'input',
-                message: 'What is the name of the department?',
+                message: 'What is the name of the department? (or type "Cancel" to return to main menu)',
                 validate: (value) => {
                     if (value) {
                         return true;
@@ -291,15 +325,19 @@ const addDepartment = async () => {
             }
         ]);
 
-        // insert the new department into the database
-        const query = 'INSERT INTO department (department_name) VALUES (?)';
+        if (departmentAnswer.departmentName === 'Cancel') {
+            promptUser();
+        } else {
+            // insert the new department into the database
+            const query = 'INSERT INTO department (department_name) VALUES (?)';
 
-        // display success message and view all departments
-        await connection.promise().query(query, departmentAnswer.departmentName);
-        console.log('Department added.');
+            // display success message and view all departments
+            await connection.promise().query(query, departmentAnswer.departmentName);
+            console.log(chalk.bold.yellow('DEPARTMENT ADDED'));
 
-        // view all departments
-        viewAllDepartments();
+            // view all departments
+            viewAllDepartments();
+        }
     } catch (err) {
         throw err;
     }
@@ -307,7 +345,6 @@ const addDepartment = async () => {
 
 //! -----------------------VIEW FUNCTIONS----------------------------
 
-// view all employees
 const viewAllEmployees = async () => {
 
     // query to get all employees
@@ -329,8 +366,18 @@ const viewAllEmployees = async () => {
     try {
         const [res] = await connection.promise().query(query);
 
-        // display the results in a table
-        console.table(res); // add styling
+        // add styling to the console.table output
+        const styledTable = res.map(row => ({
+            id: chalk.blue(row.id),
+            first_name: chalk.green(row.first_name),
+            last_name: chalk.green(row.last_name),
+            title: chalk.yellow(row.title),
+            department: chalk.redBright(row.department),
+            salary: chalk.cyan(row.salary),
+            manager: chalk.magenta(row.manager)
+        }));
+
+        console.table(styledTable);
 
         // prompt the user to continue
         promptUser();
@@ -351,12 +398,17 @@ const viewAllEmployeesByDepartment = async () => {
         LEFT JOIN role ON employee.role_id = role.id
         LEFT JOIN department ON role.department_id = department.id`;
 
-    // display the results in a table
+    // display the results in a table with styling
     try {
         const [res] = await connection.promise().query(query);
 
-        // display the results in a table
-        console.table(res); // add styling
+        const styledTable = res.map(row => ({
+            first_name: chalk.green(row.first_name),
+            last_name: chalk.green(row.last_name),
+            department: chalk.redBright(row.department)
+        }));
+
+        console.table(styledTable);
 
         // prompt the user to continue
         promptUser();
@@ -378,8 +430,15 @@ const viewAllRoles = async () => {
     try {
         const [res] = await connection.promise().query(query);
 
-        // display the results in a table
-        console.table(res);
+        // add styling to the console.table output
+        const styledTable = res.map(row => ({
+            id: chalk.blue(row.id),
+            title: chalk.yellow(row.title),
+            department: chalk.redBright(row.department),
+            salary: chalk.cyan(row.salary)
+        }));
+
+        console.table(styledTable);
 
         // prompt the user to continue
         promptUser();
@@ -396,7 +455,13 @@ const viewAllDepartments = async () => {
         const [res] = await connection.promise().query('SELECT * FROM department');
 
         // display the results in a table
-        console.table(res);
+        const styledTable = res.map(row => ({
+            id: chalk.blue(row.id),
+            department_name: chalk.green(row.department_name)
+        }));
+
+        console.table(styledTable); 
+
 
         // prompt the user to continue
         promptUser();
@@ -420,7 +485,15 @@ const viewDepartmentBudget = async () => {
     // display the results in a table
     try {
         const [res] = await connection.promise().query(query);
-        console.table(res); // add styling
+
+        // display the results in a table
+        const styledTable = res.map(row => ({
+            id: chalk.blue(row.id),
+            department: chalk.green(row.department),
+            budget: chalk.cyan(row.budget)
+        }));
+
+        console.table(styledTable); // add styling
 
         // prompt the user to continue
         promptUser();
@@ -449,15 +522,20 @@ const updateEmployeeRole = async () => {
                 name: 'selectedEmployee',
                 type: 'list',
                 message: 'Which employee would you like to update?',
-                choices: employeeNameArray
+                choices: [...employeeNameArray, 'Cancel']
             },
             {
                 name: 'selectedRole',
                 type: 'list',
                 message: 'What is the employees new role?',
-                choices: rolesArray
+                choices: [...rolesArray, 'Cancel']
             }
         ]);
+
+        if (answer.selectedEmployee === 'Cancel' || answer.selectedRole === 'Cancel') {
+            promptUser();
+            return;
+        }
 
         // update the employee role in the database
         const newTitleId = roles.find(role => answer.selectedRole === role.title).id;
@@ -467,7 +545,7 @@ const updateEmployeeRole = async () => {
         await connection.promise().query(updateQuery, [newTitleId, employeeId]);
 
         // display success message and prompt the user to continue
-        console.log('Employee role updated.');
+        console.log(chalk.bold.yellow('EMPLOYEE ROLE UPDATED'));
 
         // prompt the user to continue
         promptUser();
@@ -485,7 +563,7 @@ const updateEmployeeManager = async () => {
         const [employees] = await connection.promise().query(query);
 
         let employeeNameArray = employees.map(employee => `${employee.first_name} ${employee.last_name}`);
-        employeeNameArray.push('None');
+        employeeNameArray.push('Cancel');
 
         // prompt the user for the employee and manager to update
         const answer = await inquirer.prompt([
@@ -503,23 +581,28 @@ const updateEmployeeManager = async () => {
             }
         ]);
 
-        // update the employee manager in the database
-        const employeeId = employees.find(employee => answer.selectedEmployee === `${employee.first_name} ${employee.last_name}`).id;
-        const managerId = answer.newManager === 'None' ? null : employees.find(employee => answer.newManager === `${employee.first_name} ${employee.last_name}`).id;
-
-        // check if the employee is their own manager
-        if (employeeId === managerId) {
-            console.log('Employee cannot be their own manager.');
+        // check if the user clicked on the Cancel option
+        if (answer.selectedEmployee === 'Cancel' || answer.newManager === 'Cancel') {
             promptUser();
         } else {
-            const updateQuery = 'UPDATE employee SET employee.manager_id = ? WHERE employee.id = ?';
-            await connection.promise().query(updateQuery, [managerId, employeeId]);
+            // update the employee manager in the database
+            const employeeId = employees.find(employee => answer.selectedEmployee === `${employee.first_name} ${employee.last_name}`).id;
+            const managerId = answer.newManager === 'None' ? null : employees.find(employee => answer.newManager === `${employee.first_name} ${employee.last_name}`).id;
 
-            // display success message and prompt the user to continue
-            console.log('Employee manager updated.');
+            // check if the employee is their own manager
+            if (employeeId === managerId) {
+                console.log('Employee cannot be their own manager.');
+                promptUser();
+            } else {
+                const updateQuery = 'UPDATE employee SET employee.manager_id = ? WHERE employee.id = ?';
+                await connection.promise().query(updateQuery, [managerId, employeeId]);
 
-            // prompt the user to continue
-            promptUser();
+                // display success message and prompt the user to continue
+                console.log(chalk.bold.yellow('EMPLOYEE MANAGER UPDATED'));
+
+                // prompt the user to continue
+                promptUser();
+            }
         }
     } catch (err) {
         throw err;
@@ -538,6 +621,7 @@ const deleteEmployee = async () => {
 
         // prompt the user for the employee to delete
         const employeeNameArray = res.map(employee => `${employee.first_name} ${employee.last_name}`);
+        employeeNameArray.push('Cancel');
         const answer = await inquirer.prompt([
             {
                 name: 'selectedEmployee',
@@ -547,6 +631,12 @@ const deleteEmployee = async () => {
             }
         ]);
 
+        // if the user selects "Cancel", go back to the main menu
+        if (answer.selectedEmployee === 'Cancel') {
+            promptUser();
+            return;
+        }
+
         // delete the employee from the database
         const employeeId = res.find(employee => answer.selectedEmployee === `${employee.first_name} ${employee.last_name}`).id;
 
@@ -555,7 +645,7 @@ const deleteEmployee = async () => {
         await connection.promise().query(deleteQuery, [employeeId]);
 
         // display success message and prompt the user to continue
-        console.log('Employee deleted.');
+        console.log(chalk.bold.yellow('EMPLOYEE DELETED'));
 
         // prompt the user to continue
         promptUser();
@@ -573,7 +663,7 @@ const deleteRole = async () => {
         const [res] = await connection.promise().query(query);
 
         const rolesArray = res.map(role => role.title);
-
+        rolesArray.push('Cancel');
 
         // prompt the user for the role to delete
         const answer = await inquirer.prompt([
@@ -585,15 +675,20 @@ const deleteRole = async () => {
             }
         ]);
 
-        const roleId = res.find(role => answer.selectedRole === role.title).id;
+        // if the user selects "Cancel", go back to the main menu
+        if (answer.selectedRole === 'Cancel') {
+            promptUser();
+            return;
+        }
 
+        const roleId = res.find(role => answer.selectedRole === role.title).id;
 
         // check if the role has any dependents
         const deleteQuery = 'DELETE FROM role WHERE role.id = ?';
         await connection.promise().query(deleteQuery, [roleId]);
 
         // display success message and prompt the user to continue
-        console.log('Role deleted.');
+        console.log(chalk.bold.yellow('ROLE DELETED'));
 
         // prompt the user to continue
         viewAllRoles();
@@ -611,7 +706,7 @@ const deleteDepartment = async () => {
         const [res] = await connection.promise().query(query);
 
         const departmentNameArray = res.map(department => department.department_name);
-
+        departmentNameArray.push('Cancel');
 
         // prompt the user for the department to delete
         const answer = await inquirer.prompt([
@@ -623,6 +718,11 @@ const deleteDepartment = async () => {
             }
         ]);
 
+        // If user chooses to cancel, send them back to home page
+        if (answer.selectedDepartment === 'Cancel') {
+            promptUser();
+            return;
+        }
 
         // check if the department has any dependents
         const departmentId = res.find(department => answer.selectedDepartment === department.department_name).id;
@@ -631,7 +731,7 @@ const deleteDepartment = async () => {
         await connection.promise().query(deleteQuery, [departmentId]);
 
         // display success message and prompt the user to continue
-        console.log('Department deleted.');
+        console.log(chalk.bold.yellow('DEPARTMENT DELETED'));
 
         // prompt the user to continue
         promptUser();
