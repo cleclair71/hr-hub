@@ -14,7 +14,7 @@
      <img src="/assets/img/hrhub.jpg" alt="Logo" height="200">
    </a>
     <p align="center">
-      Teamwork made easy with our input generated CLI crew cards!
+      Your ultimate employee management solution
     </p>
   
 <br />
@@ -64,12 +64,11 @@ Last but not least, our application also allows you to update an employee's role
 
 ## :star: Added Features
 
- - Collapsible cards at a click of a button
- - Avatar api fetch with axios
- - Fully Responsive cards
- - Link to an alert that prompts you create a new team
- - Default photo is there if an api error or the user doesn't have a github profile
- - Role specific icons and cover photos
+ - Styled tables and console logs using Chalk
+ - Banner logo using Figlet
+ - View, add, delete and update functions
+ - Cancel option that sends you to main page
+ - .env file that protects password
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -87,7 +86,7 @@ git clone https://github.com/cleclair71/hr-hub.git
 ```bash
 cd hr-hub
 ```
-3. Install [`inquirer`](https://www.npmjs.com/package/inquirer), [`axios`](https://www.npmjs.com/package/axios) and [`jest`](https://www.npmjs.com/package/jest)
+3. Install [`inquirer`](https://www.npmjs.com/package/inquirer), [`figlet`](https://www.npmjs.com/search?q=figlet), [`dotenv`](https://www.npmjs.com/package/dotenv), [`mysql2`](https://www.npmjs.com/package/mysql2), [`chalk`](https://www.npmjs.com/package/chalk) and [`console.table`](https://www.npmjs.com/package/console.table)
 
 ```bash
 npm i
@@ -95,7 +94,7 @@ npm i
 4. Run the App
 
 ```bash
-\hr-hub> node index.js
+\hr-hub> npm start
 ```
 
 This will start the application and prompt you to answer the required prompts in the command line. 
@@ -161,14 +160,7 @@ MIT
 * [Creating and Selecting a Database](https://dev.mysql.com/doc/refman/8.0/en/creating-database.html)
 * [Creating a Table](https://dev.mysql.com/doc/refman/8.0/en/creating-tables.html)
 * [Figlet](https://www.npmjs.com/package/figlet)
-* [Template literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
 * [How To Create Interactive Command-line Prompts with Inquirer.js](https://www.digitalocean.com/community/tutorials/nodejs-interactive-command-line-prompts)
-* [Icons created by Paul J.](https://www.flaticon.com/free-icons/programmer)
-* [onerror](https://www.w3schools.com/jsref/event_onerror.asp)
-* [Collapse](https://getbootstrap.com/docs/4.1/components/collapse/)
-* [Overwrite a File with node.js](https://stackoverflow.com/questions/43892482/whats-the-best-way-to-overwrite-a-file-using-fs-in-node-js)
-* [Axios](https://kapeli.com/cheat_sheets/Axios.docset/Contents/Resources/Documents/index)
-* [github API](https://api.github.com/users/cleclair71)
 * [Canva](https://www.canva.com/)
 * [Everything you should know about ‘module’ & ‘require’ in Node.js](https://www.freecodecamp.org/news/require-module-in-node-js-everything-about-module-require-ccccd3ad383/)
 * [break](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/break)
