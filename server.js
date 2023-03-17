@@ -5,11 +5,6 @@ const chalk = require('chalk');
 const figlet = require('figlet');
 const connection = require('./config/connection');
 
-// const { addEmployee, addRole, addDepartment } = require('./lib/addFunctions');
-// const {updateEmployeeRole, updateEmployeeManager} = require('./lib/updateFunctions');
-// const {deleteEmployee, deleteRole, deleteDepartment} = require('./lib/deleteFunctions');
-// const {viewAllEmployees, viewAllEmployeesByDepartment, viewAllEmployeesByManager, viewAllRoles, viewAllDepartments, viewDepartmentBudget} = require('./lib/displayFunctions');
-
 // connect to connection
 connection.connect(function (err) {
     if (err) throw err;
@@ -102,8 +97,9 @@ const promptUser = () => {
     });
 };
 
-// add new employee
+//! -----------------------ADD FUNCTIONS----------------------------
 
+// add employee
 const addEmployee = async () => {
     try {
         const answer = await inquirer.prompt([
@@ -180,6 +176,8 @@ const addEmployee = async () => {
     }
 };
 
+
+// add role
 const addRole = async () => {
     try {
         const query = 'SELECT * FROM department';
@@ -242,6 +240,7 @@ const addRole = async () => {
     }
 };
 
+// add department
 const addDepartment = async () => {
     try {
         const departmentAnswer = await inquirer.prompt([
@@ -267,8 +266,10 @@ const addDepartment = async () => {
         throw err;
     }
 };
-// view all employees
 
+//! -----------------------VIEW FUNCTIONS----------------------------
+
+// view all employees
 const viewAllEmployees = async () => {
     
     const query = 
@@ -294,6 +295,7 @@ const viewAllEmployees = async () => {
     }
 };
 
+// view all employees by department
 const viewAllEmployeesByDepartment = async () => {
     const query =
         `SELECT employee.first_name,
@@ -312,6 +314,7 @@ const viewAllEmployeesByDepartment = async () => {
     }
 };
 
+// view all roles
 const viewAllRoles = async () => {
     const query =
         `SELECT role.id, role.title, department.department_name AS department, role.salary
@@ -327,6 +330,7 @@ const viewAllRoles = async () => {
     }
 };
 
+// view all departments
 const viewAllDepartments = async () => {
     try {
         const [res] = await connection.promise().query('SELECT * FROM department');
@@ -356,6 +360,8 @@ const viewDepartmentBudget = async () => {
     }
 };
 
+//! -----------------------UPDATE FUNCTIONS----------------------------
+// update employee role
 const updateEmployeeRole = async () => {
     try {
         const employeeQuery = 'SELECT employee.id, employee.first_name, employee.last_name, role.id AS "role_id" FROM employee LEFT JOIN role ON employee.role_id = role.id';
@@ -392,6 +398,8 @@ const updateEmployeeRole = async () => {
         throw err;
     }
 };
+
+// update employee manager
 const updateEmployeeManager = async () => {
     try {
         const query = 'SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id FROM employee';
@@ -431,6 +439,10 @@ const updateEmployeeManager = async () => {
         throw err;
     }
 };
+
+//! -----------------------DELETE FUNCTIONS----------------------------
+
+// delete employee
 const deleteEmployee = async () => {
     try {
         const query = 'SELECT employee.id, employee.first_name, employee.last_name FROM employee';
@@ -457,6 +469,8 @@ const deleteEmployee = async () => {
         throw err;
     }
 };
+
+// delete role
 const deleteRole = async () => {
     try {
         const query = 'SELECT role.id, role.title FROM role';
@@ -484,6 +498,7 @@ const deleteRole = async () => {
     }
 };
 
+// delete department
 const deleteDepartment = async () => {
     try {
         const query = 'SELECT department.id, department.department_name FROM department';
