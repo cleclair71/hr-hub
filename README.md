@@ -44,7 +44,7 @@
 <a name="description"></a>
 ## :rocket: About The Project
 <p align="center">
-  <img src="assets\Capture.JPG"/>
+  <img src="/assets/img/Capture1.JPG"/>
 </p>
 
 Welcome to our business management tool HR Hub! This application has been designed to help you organize and plan your business by providing you with a comprehensive view of your departments, roles, and employees.
@@ -108,11 +108,11 @@ This will start the application and prompt you to answer the required prompts in
 ## :computer: Usage
 
 <div align="center">
-     <img src="assets\app.gif">
+     <img src="/assets/img/Capture2.JPG">
    </div>
    <br />
    <p align="center"> 
-   <a href="https://drive.google.com/file/d/1oZJElx4QXzcGZlfQwMoUEVd9D6Ld_YKO/view?usp=sharing">Walk Through Video</a>
+   <a href="https://drive.google.com/file/d/1SaFJ0inFVvoznt1Z5SopzPfYlRiLRGAo/view">Walk Through Video</a>
    </p>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
